@@ -1,11 +1,12 @@
 from datetime import date, datetime, time
 from typing import List
-from sqlmodel import SQLModel, Field, Column
-from uuid import uuid4, UUID
+from uuid import UUID, uuid4
 
+from sqlalchemy.dialects.postgresql import TIMESTAMP
+from sqlalchemy.dialects.postgresql import UUID as UUID_Field
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.dialects.postgresql import UUID as UUID_Field, TIMESTAMP
 from sqlalchemy.sql import functions
+from sqlmodel import Column, Field, SQLModel
 
 
 class NewsSqlModel(SQLModel, table=True):
@@ -30,12 +31,6 @@ class NewsModel:
         self.time = None
         self.timestamp = None
         self.text = None
-
-    def __str__(self) -> str:
-        return f"{str(self.timestamp)} - {self.text}"
-
-    def __repr__(self) -> str:
-        return self.__str__()
 
     def to_sql(self) -> NewsSqlModel:
         return NewsSqlModel(id=uuid4(), news=self.text, publish_date=self.timestamp)
@@ -65,9 +60,4 @@ class NewsBuilder:
         await session.commit()
 
     def check_date(self, last_date: datetime) -> bool:
-        assert isinstance(last_date, datetime), f"shiiit, {last_date}"
-        assert isinstance(self.news.timestamp, datetime), f"huinya, {self.news.timestamp, type(self.news.timestamp)}"
         return self.news.timestamp > last_date
-
-
-# builder = NewsBuilder()

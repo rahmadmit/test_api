@@ -1,8 +1,8 @@
 from datetime import datetime
 from html.parser import HTMLParser
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from .model import NewsBuilder
+
 
 class CustomParser(HTMLParser):
     parse_counter = 0
@@ -13,7 +13,6 @@ class CustomParser(HTMLParser):
         super().__init__()
 
     def handle_data(self, data: str):
-        
         data = data.strip()
         if not data:
             return
@@ -28,9 +27,9 @@ class CustomParser(HTMLParser):
 
         elif self.parse_counter == 1:
             try:
-                t_stamp = datetime.strptime(data, '%H:%M').time()
+                t_stamp = datetime.strptime(data, "%H:%M").time()
             except ValueError:
-                t_stamp = datetime(1,1,1,0,0,0).time()
+                t_stamp = datetime(1, 1, 1, 0, 0, 0).time()
             self.builder.set_time(t_stamp)
             if not self.builder.check_date(self.last_date):
                 self.parse_counter = -1

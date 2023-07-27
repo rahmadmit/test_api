@@ -4,13 +4,12 @@ from contextlib import asynccontextmanager
 from pydantic import PostgresDsn
 from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    async_scoped_session,
     AsyncSession,
+    async_scoped_session,
+    create_async_engine,
 )
-from sqlalchemy.pool import QueuePool
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import text
+from sqlalchemy.pool import QueuePool
 
 
 class PostgresURL(PostgresDsn):
@@ -48,7 +47,8 @@ class PostgresClient:
         async with self._session_factory() as session:
             yield session
 
+
 async def get_db(postgres_dsn: PostgresURL):
     client = PostgresClient(postgres_dsn)
     async with client.session() as session:
-            return session
+        return session

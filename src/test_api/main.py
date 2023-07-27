@@ -61,7 +61,7 @@ async def startup():
         if last_news is None:
             last_news = datetime(1, 1, 1, 1, 1, 1)
         else:
-            last_news = last_news[0].publish_date
+            last_news = last_news.publish_date
 
         headers = {"User-Agent": "*"}
         response = requests.get(

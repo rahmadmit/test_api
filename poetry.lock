@@ -623,7 +623,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "ffaeeb4ae9e55af129e5432a7b1527838f4d08d32bf04b3224ced4be15fdd9e9"
+content-hash = "fd9a48935da4fe21c33f5f87f0ed227753598bc53dd005c25ba0a8d6f3ad496a"
 
 [metadata.files]
 alembic = []
