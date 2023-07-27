@@ -38,7 +38,7 @@ class NewsModel:
 class NewsBuilder:
     def __init__(self):
         self.news = NewsModel()
-        self.news_list: List[NewsSqlModel] = []
+        self.upload_list: List[NewsSqlModel] = []
 
 
     def set_date(self, d: date):
@@ -52,11 +52,11 @@ class NewsBuilder:
         self.news.text = t
 
     def push(self):
-        self.news_list.append(self.news.to_sql())
+        self.upload_list.append(self.news.to_sql())
         self.news = NewsModel()
 
     async def upload(self, session: AsyncSession) -> None:
-        session.add_all(self.news_list)
+        session.add_all(self.upload_list)
         await session.commit()
 
     def check_date(self, last_date: datetime) -> bool:

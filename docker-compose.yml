@@ -7,6 +7,7 @@ services:
     environment:
       POETRY_VIRTUALENVS_PATH: /poetry
       POSTGRES_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/postgres
+      METRO_NEWS_URL: https://mosday.ru/news/tags.php?metro
     ports:
       - 8080:8080/tcp
     volumes:

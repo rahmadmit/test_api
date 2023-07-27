@@ -6,11 +6,15 @@ from .model import NewsBuilder
 
 class CustomParser(HTMLParser):
     parse_counter = 0
-    builder = NewsBuilder()
 
     def __init__(self, last_date: datetime):
         self.last_date = last_date
+        self._builder = NewsBuilder()
         super().__init__()
+
+    @property
+    def builder(self):
+        return self._builder
 
     def handle_data(self, data: str):
         data = data.strip()
