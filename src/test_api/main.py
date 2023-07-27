@@ -33,8 +33,8 @@ class Router:
             await self.session.execute(
                 select(NewsSqlModel).where(
                     and_(
-                        NewsSqlModel.publish_date > from_,
-                        NewsSqlModel.publish_date < to,
+                        NewsSqlModel.publish_date >= from_,
+                        NewsSqlModel.publish_date <= to,
                     )
                 )
             )
