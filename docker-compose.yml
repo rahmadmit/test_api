@@ -1,0 +1,28 @@
+version: "3.3"
+services:
+  test_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      POETRY_VIRTUALENVS_PATH: /poetry
+      POSTGRES_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/postgres
+    ports:
+      - 8080:8080/tcp
+    volumes:
+      - ./data/app:/poetry:rw
+      - ./src:/app/src:ro
+      - ./tests:/app/tests:ro
+      - ./pyproject.toml:/app/pyproject.toml:ro
+      - ./poetry.lock:/app/poetry.lock:ro
+    command: server
+    restart: always
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432/tcp
