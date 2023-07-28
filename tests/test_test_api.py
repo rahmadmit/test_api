@@ -6,6 +6,7 @@ import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy import delete
+from sqlalchemy.sql import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from test_api import __version__
 from test_api.db.postgres import PostgresClient
@@ -38,6 +39,8 @@ async def test_api():
 async def db():
     client = PostgresClient(settings.postgres_url)
     async with client.session() as session:
+        await session.execute(text("TRUNCATE metro_news;"))
+        await session.commit()
         yield session
 
 
@@ -56,7 +59,7 @@ async def get_news(db: AsyncSession):
     await db.execute(delete(NewsSqlModel))
 
 @pytest.mark.anyio
-async def test_get_news(test_api: AsyncClient):
+async def test_get_news(test_api: AsyncClient, db: AsyncSession, get_news):
     from_ = datetime(2023, 7, 27, 10, 0, 0)
     to_ = datetime(2023, 7, 27, 15, 0, 0)
     response = await test_api.get(

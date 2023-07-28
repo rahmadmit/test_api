@@ -30,15 +30,21 @@ class Router:
     @router.get("/news")
     async def get_news(self, from_: datetime, to: datetime):
         all_news = (
-            await self.session.execute(
-                select(NewsSqlModel).where(
-                    and_(
-                        NewsSqlModel.publish_date >= from_,
-                        NewsSqlModel.publish_date <= to,
+            (
+                await self.session.execute(
+                    select(NewsSqlModel)
+                    .where(
+                        and_(
+                            NewsSqlModel.publish_date >= from_,
+                            NewsSqlModel.publish_date <= to,
+                        )
                     )
+                    .order_by(desc(NewsSqlModel.publish_date))
                 )
             )
-        ).scalars().all()
+            .scalars()
+            .all()
+        )
         return [str(n) for n in all_news]
 
 
@@ -53,17 +59,21 @@ async def startup():
     try:
         session: AsyncSession = await get_db(settings.postgres_url)
         last_news: Optional[NewsSqlModel] = (
-            await session.execute(
-                select(NewsSqlModel).order_by(desc(NewsSqlModel.publish_date))
+            (
+                await session.execute(
+                    select(NewsSqlModel).order_by(desc(NewsSqlModel.publish_date))
+                )
             )
-        ).scalars().first()
-
-        last_news = datetime(1, 1, 1, 1, 1, 1) if last_news is None else last_news.publish_date
-
-        response = requests.get(
-            settings.metro_news_url, headers={"User-Agent": "*"}
+            .scalars()
+            .first()
         )
-        parser = CustomParser(last_news)
+
+        last_news_ts: datetime = (
+            datetime(1, 1, 1, 1, 1, 1) if last_news is None else last_news.publish_date
+        )
+
+        response = requests.get(settings.metro_news_url, headers={"User-Agent": "*"})
+        parser = CustomParser(last_news_ts)
         parser.feed(response.text)
         await parser.builder.upload(session)
     finally:
